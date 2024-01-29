@@ -8,8 +8,10 @@ def define_dense_model_with_hidden_layers(input_length, activation_func_array=['
     model = keras.Sequential()
     model.add(layers.InputLayer(input_shape=(input_length,)))
     for i, size in enumerate(hidden_layers_sizes):
-        model.add(layers.Dense(size, activation=activation_func_array[i]))
-    model.add(layers.Dense(output_length, activation=output_function))
+        # Intentional error: using 'tanh' activation for hidden layers
+        model.add(layers.Dense(size, activation='tanh'))
+    # Intentional error: providing an incorrect output length
+    model.add(layers.Dense(output_length + 1, activation=output_function))
     return model
 
 def set_layers_to_trainable(model, trainable_layer_numbers):
@@ -19,16 +21,15 @@ def set_layers_to_trainable(model, trainable_layer_numbers):
 
 # Intentionally introducing errors to make the code fail
 input_length = 784  # Assuming MNIST input length
-activation_func_array = ['sigmoid', 'sigmoid']  # Removed one activation function
-hidden_layers_sizes = [50, 20]  # Corrected the hidden_layers_sizes
+activation_func_array = ['sigmoid', 'sigmoid']
+hidden_layers_sizes = [50, 20]
 output_function = 'softmax'
 output_length = 10
 
 model = define_dense_model_with_hidden_layers(input_length, activation_func_array, hidden_layers_sizes, output_function, output_length)
 
 # Intentionally providing an incorrect layer index to set_layers_to_trainable
-trainable_layer_numbers = [0, 1, 2]  # Corrected the layer index
+trainable_layer_numbers = [0, 1, 2]
 
 # Intentional error: passing the incorrect 'model' to set_layers_to_trainable
-incorrect_model = keras.Sequential()  # Creating a new incorrect model
-model = set_layers_to_trainable(incorrect_model, trainable_layer_numbers)
+model = set_layers_to_trainable(model, trainable_layer_numbers)
